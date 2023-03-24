@@ -367,13 +367,17 @@ def baidu_trans(app_id, app_key, text, tar_lang):
 
     if not tar_lang:
         tar_lang = 'en'
-
+    src_lang = 'auto'
+    if tar_lang == 'en':
+        src_lang = 'zh'
+    else:
+        src_lang = 'en'
     # set http request
     salt = str(random.randint(10000,10000000))
     sign_str = app_id+text+salt+app_key
     sign_md5 = hashlib.md5(sign_str.encode("utf-8")).hexdigest()
 
-    request_link = trans_providers["baidu"]["url"]+"?q="+text+"&from=auto&to="+tar_lang+"&appid="+app_id+"&salt="+salt+"&sign="+sign_md5
+    request_link = trans_providers["baidu"]["url"]+"?q="+text+"&from="+src_lang+"&to="+tar_lang+"&appid="+app_id+"&salt="+salt+"&sign="+sign_md5
 
     print("Sending request")
     r = None
@@ -674,7 +678,7 @@ def on_ui_tabs():
         gr.Markdown("Translation Service Setting")
         provider = gr.Dropdown(choices=providers, value=provider_name, label="Provider", elem_id="pt_provider")
         app_id = gr.Textbox(label="APP ID", lines=1, value=trans_setting[provider_name]["app_id"], elem_id="pt_app_id")
-        app_key = gr.Textbox(label="APP KEY", lines=1, value=trans_setting[provider_name]["app_key"], elem_id="pt_app_key")
+        app_key = gr.Textbox(label="APP KEY", lines=1, value=trans_setting[provider_name]["app_key"], elem_id="pt_app_key",type="password")
         save_trans_setting_btn = gr.Button(value="Save Setting")
 
         # deepl do not need appid
